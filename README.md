@@ -3,23 +3,28 @@ unity-gloebit
 
 Unity plugin for accessing Gloebit's API
 
-Works with webplayer
+This currently only works with webplayer.  Two legged OAuth 2 is used
+to grant your application permission to access a user's Gloebit account.
 
-Put Gloebit.cs in your project's plugins directory.
+Start by putting *Gloebit.cs* in your project's plugins directory.
+When a user first visits your website, there will be no
+Gloebit access token.
 
-When user first visits website, there will be no gloebit access token.
+Check for an access token:
 
-First, check for an access token
-
+```C#
     Gloebit.GloebitUser gbit;
     gbit = gameObject.AddComponent<Gloebit.GloebitUser>();
     access_code = gbit.getAccessCode ("test-consumer");
+```
 
-and (since there isn't one) call
+and (since there isn't one) call:
 
+```C#
     if (access_code == null) {
       gbit.Authorize (Application.absoluteURL);
     }
+```
 
 The user will arrive at Gloebit's website, where they can authenticate
 and authorized your website's access to their account.
