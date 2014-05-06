@@ -1,9 +1,9 @@
 unity-gloebit
 =============
 
-Unity plugin for accessing Gloebit's API
+## C# class for accessing Gloebit's API from Unity's webplayer.
 
-This currently only works with webplayer.  Two legged OAuth 2 is used
+Two legged OAuth 2 is used
 to grant your application permission to access a user's Gloebit account.
 
 Start by putting *Gloebit.cs* in your project's plugins directory.
