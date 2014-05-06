@@ -1,7 +1,7 @@
 unity-gloebit
 =============
 
-## C# class for accessing Gloebit's API from Unity's webplayer.
+### C# class for accessing Gloebit's API from Unity's webplayer.
 
 Two legged OAuth 2 is used
 to grant your application permission to access a user's Gloebit account.
@@ -39,7 +39,9 @@ Gloebit API calls supported by the Gloebit.GloebitUser class.
 GloebitUser API
 ===============
 
-### getAccessCode (string consumer_key)
+```
+getAccessCode (string consumer_key)
+```
 
 This should be called when the application starts.  It will either
 extract the access token from the "code" query-argument or return null.  If
@@ -49,7 +51,9 @@ The value for **consumer_key** can be found on the
 [Merchant Settings](https://www.gloebit.com/merchant-tools/)
 page of your Gloebit account.  For testing, you can use "test-consumer".
 
-### Authorize (url)
+```
+Authorize (url)
+```
 
 Your application should call this when it finds that it doesn't have a
 valid access token.  The **url** argument should be the url of your
@@ -58,14 +62,18 @@ website, and OAuth 2 will be used to create an access token for your
 application.  Once the user has logged in, their browser will be sent
 back to the url provided in the argument to Authorize.
 
-### GetBalance (callback)
+```
+GetBalance (callback)
+```
 
 This is used to request the current gloebit balance of a user's account.
 **callback** should be a function that accepts one argument -- a float which
 represents the user's balance.  The balance is retrived by using
 a coroutine to make requests to Gloebit's server.
 
-### GetProducts (callback)
+```
+GetProducts (callback)
+```
 
 Request a list of *products* associated with the current user's Gloebit
 account.  *products* are tags (strings) which are predefined using
@@ -78,7 +86,9 @@ can be used to reduce the number of a user's *product* type.
 Dictionary<string,object> which has product names as keys and counts
 as values.
 
-### BuyProduct (string product_name, int count, Action<bool, float, int> cb)
+```
+BuyProduct (string product_name, int count, Action<bool, float, int> cb)
+```
 
 This call will attempt to increase the number of a type of product
 associated with the current user's Gloebit account by **count**.
@@ -86,7 +96,9 @@ associated with the current user's Gloebit account by **count**.
 a float representing the user's new gloebit balance, and an int
 which represents how many of **product_name** the user now has.
 
-### ConsumeProduct (string product_name, int count, Action<bool, int> cb)
+```
+ConsumeProduct (string product_name, int count, Action<bool, int> cb)
+```
 
 This will reduce the number of **product_name** associated with the user's
 Gloebit account by **count**.  **cb** should be a function which accepts
