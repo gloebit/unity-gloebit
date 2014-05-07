@@ -1,7 +1,7 @@
 unity-gloebit
 =============
 
-### C# class for accessing Gloebit's API from Unity's webplayer.
+### C# class for accessing [Gloebit](http://docs.gloebit.com/)'s API from Unity's webplayer.
 
 Two legged OAuth 2 is used
 to grant your application permission to access a user's Gloebit account.
