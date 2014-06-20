@@ -12,7 +12,7 @@ namespace Gloebit
   {
     private string access_code = null;
     private string consumer_key = null;
-    public string gloebit_base_url = "https://api0.gloebit.com";
+    public string gloebit_base_url = "https://sandbox.gloebit.com";
 
     public GloebitUser () {
     }
@@ -65,7 +65,7 @@ namespace Gloebit
     public void Authorize (string url) {
       Dictionary<string, string> qargs =
         new Dictionary<string, string>();
-      qargs.Add ("scope", "balance transact inventory");
+      qargs.Add ("scope", "inventory");
       qargs.Add ("redirect_uri", url);
       qargs.Add ("response_type", "token");
       qargs.Add ("client_id", consumer_key);
@@ -74,43 +74,6 @@ namespace Gloebit
 
       Application.OpenURL (gloebit_base_url + "/oauth2/authorize" +
                            EncodeQueryData (qargs));
-    }
-
-
-    private IEnumerator GetBalanceWorker (Action<float> cb) {
-      string balance_url = gloebit_base_url + "/balance/";
-      Hashtable headers = new Hashtable ();
-      byte[] post_data = System.Text.Encoding.UTF8.GetBytes ("ignore");
-      headers.Add ("Authorization", "Bearer " + access_code);
-
-      WWW www = new WWW (balance_url, post_data, headers);
-      yield return www;
-
-      Dictionary<String,System.Object> response =
-        (Dictionary<String,System.Object>)
-        Json.Deserialize (www.text);
-
-      bool success = (bool) response[ "success" ];
-      if (success) {
-        float balance = float.Parse(response[ "balance" ].ToString ());
-        cb (balance);
-      }
-    }
-
-
-    public void GetBalance (Action<float> cb) {
-      StartCoroutine (GetBalanceWorker (cb));
-    }
-
-
-    public string formatBalance (float fbalance) {
-      string balance = "" + fbalance;
-      if (balance.Length > 2) {
-        if (balance.Substring (balance.Length - 2, 2) == ".0") {
-          balance = balance.Substring (0, balance.Length - 2);
-        }
-      }
-      return balance;
     }
 
 
@@ -170,55 +133,6 @@ namespace Gloebit
     public void ConsumeProduct
       (string product_name, int count, Action<bool, int> cb) {
       StartCoroutine (ConsumeProductWorker (product_name, count, cb));
-    }
-
-
-    private IEnumerator BuyProductWorker
-      (string product_name, int count, Action<bool, float, int> cb) {
-      string balance_url = gloebit_base_url + "/transact/";
-
-      System.DateTime epochStart = new System.DateTime
-        (1970, 1, 1, 8, 0, 0, System.DateTimeKind.Utc);
-      double timestamp = (System.DateTime.UtcNow - epochStart).TotalSeconds;
-      System.Guid trans_id = System.Guid.NewGuid ();
-      Dictionary<String,System.Object> trans =
-        new Dictionary<String,System.Object>();
-      trans["version"] = 1;
-      trans["id"] = trans_id.ToString ();
-      trans["request-created"] = timestamp;
-      trans["product"] = product_name;
-      trans["product-quantity"] = count;
-      trans["consumer-key"] = consumer_key;
-      trans["merchant-user-id"] = "unknown user";
-
-      string post_str = Json.Serialize (trans);
-      byte[] post_data = System.Text.Encoding.UTF8.GetBytes (post_str);
-
-      Hashtable headers = new Hashtable ();
-      headers.Add ("Authorization", "Bearer " + access_code);
-
-      WWW www = new WWW (balance_url, post_data, headers);
-      yield return www;
-
-      Dictionary<string,object> response =
-        (Dictionary<string,object>) Json.Deserialize (www.text);
-
-      bool success = (bool) response[ "success" ];
-      if (success) {
-        float balance = float.Parse(response[ "balance" ].ToString ());
-        System.Int64 i64 = (System.Int64) response[ "product-count" ];
-        int new_count = (int) i64;
-        cb (success, balance, new_count);
-      }
-      else {
-        cb (success, 0, -1);
-      }
-    }
-
-
-    public void BuyProduct
-      (string product_name, int count, Action<bool, float, int> cb) {
-      StartCoroutine (BuyProductWorker (product_name, count, cb));
     }
   }
 }
