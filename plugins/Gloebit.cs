@@ -12,7 +12,8 @@ namespace Gloebit
   {
     private string access_code = null;
     private string consumer_key = null;
-    public string gloebit_base_url = "https://sandbox.gloebit.com";
+    // public string gloebit_base_url = "https://sandbox.gloebit.com";
+    public string gloebit_base_url = "https://api0.gloebit.com";
 
     public GloebitUser () {
     }
