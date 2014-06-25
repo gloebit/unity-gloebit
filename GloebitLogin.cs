@@ -1,74 +1,135 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using Gloebit;
 
-public class GloebitExample : MonoBehaviour {
+public class GloebitLogin : MonoBehaviour
+{
+  bool access_code_is_good = false;
 
   string access_code = null;
+  String new_access_code = "";
 
-  string log_data = "";
+  bool checking_code = false;
+  String checked_code = "";
 
-  int product_hats = 0;
-  int product_shoes = 0;
-
-  Gloebit.GloebitUser gbit;
-
-
-  void Start () {
-    gbit = gameObject.AddComponent<Gloebit.GloebitUser>();
-    access_code = gbit.getAccessCode ("test-consumer");
-    if (access_code != null) {
-      refresh_products ();
-    }
+  void Start ()
+  {
+    if (Gloebit.gloebit == null)
+      {
+        print ("add Gloebit.cs to a game object.\n");
+      }
+    else
+      {
+        access_code = Gloebit.gloebit.getAccessCode ();
+        if (running_from_webserver ())
+          {
+            check_code ();
+          }
+      }
   }
 
 
-  void OnGUI() {
-    if (access_code == null) {
-      if (GUI.Button(new Rect(75,60,80,20), "Connect")) {
-        string url = Application.absoluteURL;
-        gbit.Authorize (url);
-      }
-    }
-    else {
-      GUI.Label (new Rect (40, 40, 80, 30),
-                 "hats: " + product_hats);
-      if (GUI.Button(new Rect(260,40,150,30), "Destroy a hat")) {
-        gbit.ConsumeProduct ("hat", 1, (success, new_count) => {
-            product_hats = new_count;
-          });
-      }
-
-
-      GUI.Label (new Rect (40, 70, 80, 30),
-                 "shoes: " + product_shoes);
-      if (GUI.Button(new Rect(260,70,150,30), "Destroy a shoe")) {
-        gbit.ConsumeProduct ("shoe", 1, (success, new_count) => {
-            product_shoes = new_count;
-          });
-      }
-
-      GUI.Label (new Rect (40, 200, 800, 600), log_data);
-    }
-  }
-
-
-  void refresh_products () {
-    gbit.GetProducts ((products) => {
-        foreach (string product_name in products.Keys) {
-          int product_count = (int) (System.Int64) products[ product_name ];
-
-          if (product_name == "hat") {
-            product_hats = product_count;
+  void check_code ()
+  {
+    checking_code = true;
+    checked_code = access_code;
+    Gloebit.gloebit.NoOp ((success) => {
+        if (success)
+          {
+            checking_code = false;
+            access_code_is_good = true;
+            Gloebit.gloebit.setAccessCode (checked_code);
           }
-          if (product_name == "shoe") {
-            product_shoes = product_count;
+        else
+          {
+            checking_code = false;
           }
-        }
       });
   }
 
-}
 
+  bool running_from_webserver ()
+  {
+    if (! Application.isWebPlayer)
+      {
+        return false;
+      }
+
+    if (Application.absoluteURL == "" ||
+        Application.absoluteURL.StartsWith ("file:"))
+      return false;
+
+    return true;
+  }
+
+
+  void OnGUI()
+  {
+    if (Gloebit.gloebit == null)
+      {
+        GUI.TextField
+          (new Rect(20, 20, 200, 25), "Add Gloebit.cs to a game object.");
+      }
+    else if (access_code_is_good == false)
+      {
+        if (GUI.Button(new Rect(20,20,80,25), "Login"))
+          {
+            string url = Application.absoluteURL;
+            Gloebit.gloebit.Authorize (url);
+          }
+
+        if (! running_from_webserver ())
+          {
+            GUI.Label (new Rect (20, 70, 400, 50),
+                       "Because this isn't running from a webserver, " + 
+                       "you'll need to copy and paste the access-code " + 
+                       "by hand.");
+
+            GUI.Label (new Rect (20, 120, 40, 25), "Code: ");
+
+            new_access_code = GUI.TextField
+              (new Rect (70, 120, 200, 25), new_access_code, 36);
+
+            if (GUI.Button(new Rect (290, 120, 40, 25), "Set"))
+              {
+                access_code = new_access_code;
+                Gloebit.gloebit.setAccessCode (access_code);
+              }
+
+            if (checking_code)
+              {
+                GUI.Label (new Rect (20, 170, 400, 50), "checking code...");
+              }
+            else if (checking_code == false &&
+                     access_code == checked_code &&
+                     new_access_code == access_code &&
+                     access_code != "" &&
+                     access_code != null)
+              {
+                GUI.Label (new Rect (20, 170, 400, 50), "Code is not valid.");
+              }
+
+            if (checking_code == false &&
+                access_code != checked_code &&
+                access_code != "" &&
+                access_code != null)
+              {
+                check_code ();
+              }
+          }
+      }
+    else
+      {
+        if (Application.loadedLevel + 1 < Application.levelCount)
+          {
+            Application.LoadLevel (Application.loadedLevel + 1);
+          }
+        else
+          {
+            GUI.TextField
+              (new Rect(20, 20, 200, 25), "Create the next scene.");
+          }
+      }
+  }
+}
 
