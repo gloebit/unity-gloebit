@@ -10,12 +10,9 @@ public class Gloebit : MonoBehaviour
 {
   public static Gloebit gloebit = null; // singleton
 
-
-  private string access_code = null;
+  public string access_code = null;
   public string consumer_key = "test-consumer";
-  // public string gloebit_base_url = "https://sandbox.gloebit.com";
-  public string gloebit_base_url = "https://api0.gloebit.com";
-
+  public string gloebit_base_url = "https://sandbox.gloebit.com";
 
   void Awake ()
   {
@@ -87,11 +84,10 @@ public class Gloebit : MonoBehaviour
   public void Authorize (string url) {
     Dictionary<string, string> qargs =
       new Dictionary<string, string>();
-    qargs.Add ("scope", "inventory");
+    qargs.Add ("scope", "inventory user");
     qargs.Add ("redirect_uri", url);
     qargs.Add ("response_type", "token");
     qargs.Add ("client_id", consumer_key);
-    // qargs.Add ("r", "test");
     qargs.Add ("return-to", url);
 
     Application.OpenURL (gloebit_base_url + "/oauth2/authorize" +
@@ -140,11 +136,16 @@ public class Gloebit : MonoBehaviour
       (Dictionary<string,object>) Json.Deserialize (www.text);
 
     bool success = (bool) response[ "success" ];
-    if (success) {
-      Dictionary<string,object> products =
-        (Dictionary<string,object>) response[ "products" ];
-      cb (products);
-    }
+    if (success)
+      {
+        Dictionary<string,object> products =
+          (Dictionary<string,object>) response[ "products" ];
+        cb (products);
+      }
+    else
+      {
+        cb (null);
+      }
   }
 
 
@@ -154,7 +155,7 @@ public class Gloebit : MonoBehaviour
 
 
   private IEnumerator ConsumeProductWorker
-  (string product_name, int count, Action<bool, int> cb) {
+  (string product_name, int count, Action<bool, string, string, int> cb) {
     string cp_url = gloebit_base_url + "/consume-user-product/" +
       product_name + "/" + count.ToString ();
     Hashtable headers = new Hashtable ();
@@ -171,17 +172,48 @@ public class Gloebit : MonoBehaviour
     if (success) {
       System.Int64 i64 = (System.Int64) response[ "product-count" ];
       int new_count = (int) i64;
-      cb (success, new_count);
+      cb (success, (string) response[ "reason" ], product_name, new_count);
     }
     else {
-      cb (success, -1);
+      cb (success, (string) response[ "reason" ], product_name, -1);
     }
   }
 
-
   public void ConsumeProduct
-  (string product_name, int count, Action<bool, int> cb) {
+  (string product_name, int count, Action<bool, string, string, int> cb) {
     StartCoroutine (ConsumeProductWorker (product_name, count, cb));
+  }
+
+
+
+  private IEnumerator GrantProductWorker
+  (string product_name, int count, Action<bool, string, string, int> cb) {
+    string cp_url = gloebit_base_url + "/grant-user-product/" +
+      product_name + "/" + count.ToString ();
+    Hashtable headers = new Hashtable ();
+    byte[] post_data = System.Text.Encoding.UTF8.GetBytes ("ignore");
+    headers.Add ("Authorization", "Bearer " + access_code);
+
+    WWW www = new WWW (cp_url, post_data, headers);
+    yield return www;
+
+    Dictionary<string,object> response =
+      (Dictionary<string,object>) Json.Deserialize (www.text);
+
+    bool success = (bool) response[ "success" ];
+    if (success) {
+      System.Int64 i64 = (System.Int64) response[ "product-count" ];
+      int new_count = (int) i64;
+      cb (success, (string) response[ "reason" ], product_name, new_count);
+    }
+    else {
+      cb (success, (string) response[ "reason" ], product_name, -1);
+    }
+  }
+
+  public void GrantProduct
+  (string product_name, int count, Action<bool, string, string, int> cb) {
+    StartCoroutine (GrantProductWorker (product_name, count, cb));
   }
 }
 

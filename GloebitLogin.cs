@@ -12,6 +12,8 @@ public class GloebitLogin : MonoBehaviour
   bool checking_code = false;
   String checked_code = "";
 
+  bool loading_next_scene = false;
+
   void Start ()
   {
     if (Gloebit.gloebit == null)
@@ -118,10 +120,12 @@ public class GloebitLogin : MonoBehaviour
               }
           }
       }
-    else
+    else if (! loading_next_scene)
       {
         if (Application.loadedLevel + 1 < Application.levelCount)
           {
+            loading_next_scene = true;
+            print ("loading next scene...\n");
             Application.LoadLevel (Application.loadedLevel + 1);
           }
         else
