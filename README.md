@@ -168,7 +168,7 @@ after this call has completed.
 ### SetProductCount
 
 ```C#
-GrantProduct (string product_name, int count, Action<bool, string, string, int> cb)
+SetProductCount (string product_name, int count, Action<bool, string, string, int> cb)
 ```
 
 This will set the number of **product_name** associated with the user's
