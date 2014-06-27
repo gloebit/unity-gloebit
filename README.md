@@ -55,7 +55,7 @@ These methods are available on the static singleton object:
 Gloebit.gloebit
 ```
 
-See (GloebitEntitlementsDemo.cs)[https://github.com/gloebit/unity-gloebit/blob/unity-asset-store/GloebitEntitlementsDemo.cs] for example usage.
+See [GloebitEntitlementsDemo.cs](https://github.com/gloebit/unity-gloebit/blob/unity-asset-store/GloebitEntitlementsDemo.cs) for example usage.
 
 ### getAccessCode
 
