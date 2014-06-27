@@ -18,10 +18,13 @@ public class GloebitLogin : MonoBehaviour
   {
     if (Gloebit.gloebit == null)
       {
+        // The Gloebit.cs asset needs to be attached to
+        // some gameObject in the first scene.
         print ("add Gloebit.cs to a game object.\n");
       }
     else
       {
+        // check the url for an OAuth2 access-code
         access_code = Gloebit.gloebit.getAccessCode ();
         if (running_from_webserver ())
           {
@@ -33,6 +36,7 @@ public class GloebitLogin : MonoBehaviour
 
   void check_code ()
   {
+    // do a no-op to see if Gloebit recognizes the OAuth2 access-token
     checking_code = true;
     checked_code = access_code;
     Gloebit.gloebit.NoOp ((success) => {
@@ -52,6 +56,8 @@ public class GloebitLogin : MonoBehaviour
 
   bool running_from_webserver ()
   {
+    // Is this code actually deployed, or are we running from
+    // the Unity editor or perhaps from a file on the local filesystem?
     if (! Application.isWebPlayer)
       {
         return false;
@@ -82,6 +88,10 @@ public class GloebitLogin : MonoBehaviour
 
         if (! running_from_webserver ())
           {
+            // Gloebit can't redirect the user's browser back to
+            // the url of this application unless the application is
+            // actually deployed.  As a workaround, we provide a way
+            // for the user to copy and paste the access code.
             GUI.Label (new Rect (20, 70, 400, 50),
                        "Because this isn't running from a webserver, " + 
                        "you'll need to copy and paste the access-code " + 
@@ -122,6 +132,9 @@ public class GloebitLogin : MonoBehaviour
       }
     else if (! loading_next_scene)
       {
+        // We have an access-token and it appears to work.  If there's
+        // a scene after this one, load it.  The static Gloebit.gloebit
+        // object will hang around and be available in the next scene.
         if (Application.loadedLevel + 1 < Application.levelCount)
           {
             loading_next_scene = true;
@@ -130,6 +143,8 @@ public class GloebitLogin : MonoBehaviour
           }
         else
           {
+            // no next scene/level after this one, so just put up
+            // a message.
             GUI.TextField
               (new Rect(20, 20, 200, 25), "Create the next scene.");
           }

@@ -8,6 +8,7 @@ public class GloebitEntitlementsDemo : MonoBehaviour
   Dictionary<string,object> products = null;
   bool refreshing_products = false;
 
+  // Test Consumer has a predefined list of products.
   string[] all_products = new string[7]{"hat", "shirt", "pants", "shoe",
                                         "backpack", "torch", "knife"};
 
@@ -30,11 +31,11 @@ public class GloebitEntitlementsDemo : MonoBehaviour
         print ("refreshing user's product list\n");
 
         refreshing_products = true;
-        Gloebit.gloebit.GetProducts ((new_products) => {
+        Gloebit.gloebit.GetProducts ((success, reason, new_products) => {
             products = new_products;
-            if (products == null)
+            if (! success)
               {
-                print ("GetProducts failed.  Invalid access token?");
+                print ("GetProducts failed -- " + reason);
               }
             refreshing_products = false;
           });
@@ -52,7 +53,8 @@ public class GloebitEntitlementsDemo : MonoBehaviour
         return;
       }
 
-
+    // Loop through the predefined list of products and show
+    // how many of each the current user has.
     foreach (string product_name in all_products)
       {
         int count = 0;
@@ -67,6 +69,8 @@ public class GloebitEntitlementsDemo : MonoBehaviour
         GUI.Label (new Rect (120, y, 40, vertical_size), "" + count);
         if (GUI.Button (new Rect (165, y, 45, vertical_size), "more"))
           {
+            // GrantProduct will attempt to increment the number
+            // a given product the current user has
             Gloebit.gloebit.GrantProduct
               (product_name, 1, (success, reason, pname, new_count) => {
                 if (success)
@@ -82,6 +86,8 @@ public class GloebitEntitlementsDemo : MonoBehaviour
           }
         if (GUI.Button (new Rect (220, y, 40, vertical_size), "less"))
           {
+            // ConsumeProduct will attempt to decrement the number
+            // a given product the current user has
             Gloebit.gloebit.ConsumeProduct
               (product_name, 1, (success, reason, pname, new_count) => {
                 if (success)
