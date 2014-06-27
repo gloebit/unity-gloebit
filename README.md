@@ -49,7 +49,7 @@ replace it with your own code.
 Gloebit API
 ===========
 
-These methods are available on static singleton object:
+These methods are available on the static singleton object:
 
 ```C#
 Gloebit.gloebit
