@@ -118,7 +118,7 @@ Request information about the logged-in user.
 **cb** should be a function that accepts 4 arguments: a bool
 success, a string with a message about any failure, a string containing
 the users ID
-([UUID](http://en.wikipedia.org/wiki/Universally_unique_identifier)),
+([a UUID](http://en.wikipedia.org/wiki/Universally_unique_identifier)),
 and a string containing the user's chosen display-name.  The
 display-name will be null if the user hasn't selected one.
 
