@@ -55,6 +55,8 @@ These methods are available on static singleton object:
 Gloebit.gloebit
 ```
 
+See GloebitEntitlementsDemo.cs for example usage.
+
 ### getAccessCode
 
 ```C#
