@@ -3,4 +3,4 @@ first scene.  Place the "Gloebit Demo" prefab into your second scene.
 
 See
 
-  http://dev.gloebit.com/
+  https://github.com/gloebit/unity-gloebit/tree/unity-asset-store
