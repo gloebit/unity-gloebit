@@ -13,6 +13,18 @@ Gloebit account.  Once your application has an OAuth2 access-token, it can
 get information about the user and has access to an
 entitlements/inventory database.
 
+To start, create a scene and place the "Gloebit" and "Gloebit Login"
+prefabs into it.  Create a another scene and place the GloebitDemo
+prefab into it.
+
+In build settings, select Unity Webplayer and add both scenes (make
+sure the scene with "Gloebit Login" is first).
+
+Select the first scene by double-clicking it in the Assets view.
+
+Once this is done, run the application and make sure everything
+is working; click on the Login button.
+
 Gloebit.cs contains a "singleton" object instance which is used
 to communicate with Gloebit's service.  The prefab "Gloebit" has this
 script as a component.
@@ -20,11 +32,8 @@ script as a component.
 GloebitLogin.cs contains a bare-bones login sequence.  The prefab
 "Gloebit Login" has this script as a component.
 
-To start, place the "Gloebit" and "Gloebit Login" prefabs into your
-first scene.  Place the GloebitDemo prefab in your second scene.
-
-Once this is done, run the application and make sure everything
-is working.
+GloebitEntitlementsDemo.cs contains an example class which queries for
+the user's ID and has some buttons linked to api calls.
 
 Applications also have Gloebit accounts.  The prefabs come
 preconfigured with the OAuth "consumer-key" for the "Test Consumer"
