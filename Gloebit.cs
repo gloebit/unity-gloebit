@@ -111,7 +111,6 @@ public class Gloebit : MonoBehaviour
   }
 
 
-
   private IEnumerator NoOpWorker
   (Action<bool> cb) {
     // no-op is a way to see if an access-token is valid
@@ -269,6 +268,34 @@ public class Gloebit : MonoBehaviour
 
 
 
+  private IEnumerator SetProductCountWorker
+  (string product_name, int count, Action<bool, string, string, int> cb) {
+    string gup_url = gloebit_base_url + "/set-user-product-count/" +
+      product_name + "/" + count.ToString ();
+    Hashtable headers = new Hashtable ();
+    byte[] post_data = System.Text.Encoding.UTF8.GetBytes ("ignore");
+    headers.Add ("Authorization", "Bearer " + access_code);
 
+    WWW www = new WWW (gup_url, post_data, headers);
+    yield return www;
+
+    Dictionary<string,object> response =
+      (Dictionary<string,object>) Json.Deserialize (www.text);
+
+    bool success = (bool) response[ "success" ];
+    if (success) {
+      System.Int64 i64 = (System.Int64) response[ "product-count" ];
+      int new_count = (int) i64;
+      cb (success, (string) response[ "reason" ], product_name, new_count);
+    }
+    else {
+      cb (success, (string) response[ "reason" ], product_name, -1);
+    }
+  }
+
+  public void SetProductCount
+  (string product_name, int count, Action<bool, string, string, int> cb) {
+    StartCoroutine (SetProductCountWorker (product_name, count, cb));
+  }
 }
 
