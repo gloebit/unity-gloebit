@@ -46,8 +46,8 @@ At this point, you can remove or modify the GloebitDemo prefab and
 replace it with your own code.
 
 
-GloebitUser API
-===============
+Gloebit API
+===========
 
 These methods are available on static singleton object:
 
