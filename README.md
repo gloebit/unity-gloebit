@@ -14,7 +14,7 @@ get information about the user and has access to an
 entitlements/inventory database.
 
 To start, create a scene and place the "Gloebit" and "Gloebit Login"
-prefabs into it.  Create a another scene and place the GloebitDemo
+prefabs into it.  Create a another scene and place the "GloebitDemo"
 prefab into it.
 
 In build settings, select Unity Webplayer and add both scenes (make
