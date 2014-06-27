@@ -4,7 +4,7 @@ unity-gloebit
 https://github.com/gloebit/unity-gloebit/tree/unity-asset-store
 
 
-### C# class for accessing [Gloebit](http://docs.gloebit.com/)'s API from Unity's webplayer.
+### C# class for accessing [Gloebit](http://dev.gloebit.com/)'s API from Unity's webplayer.
 
 Gloebit is a backend service for web applications.
 [OAuth2](http://oauth.net/2/)
@@ -26,17 +26,17 @@ first scene.  Place the GloebitDemo prefab in your second scene.
 Once this is done, run the application and make sure everything
 is working.
 
-Applications also have Gloebit accounts.  The prefabs come preconfigured
-with the consumer-key for the "Test" account.  Once the basic setup
-is working, you should log into Gloebit's
-[sandbox](https://sandbox.gloebit.com/login/) where you can create
-an account for your application.  Next, visit Gloebit's
+Applications also have Gloebit accounts.  The prefabs come
+preconfigured with the OAuth "consumer-key" for the "Test Consumer"
+account.  Once the basic setup is working, you should log into
+Gloebit's [sandbox](https://sandbox.gloebit.com/login/) where you can
+create an account for your application.  Next, visit Gloebit's
 [Merchant Signup Form](https://sandbox.gloebit.com/merchant-signup/?u=0&r=)
 and enter any relevant information (all fields are optional on the
-sanbox server).  Once this form has been submitted, the "Merchant Tools"
-menu item will appear in the dropdown menu.  In the "Merchant Tools"
-page, find the OAuth section and find your application's OAuth Key.
-This key should replace "test-consumer" in Gloebit.cs
+sanbox server).  Once this form has been submitted, the "Merchant
+Tools" menu item will appear in the dropdown menu.  In the "Merchant
+Tools" page, find the OAuth section and find your application's OAuth
+Key.  This key should replace "test-consumer" in Gloebit.cs
 
 ```C#
   public string consumer_key = "test-consumer";
