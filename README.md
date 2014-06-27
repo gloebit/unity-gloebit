@@ -55,6 +55,9 @@ GloebitUser API
 getAccessCode (string consumer_key)
 ```
 
+This call is taken care of by GloebitLogin.cs -- you shouldn't need
+to call it, directly.
+
 This should be called when the application starts.  It will either
 extract the access token from the "code" query-argument or return null.  If
 it returns null, the application should call Authorize.
@@ -69,6 +72,9 @@ page of your Gloebit account.  For testing, you can use "test-consumer".
 ```C#
 Authorize (string url)
 ```
+
+This call is taken care of by GloebitLogin.cs -- you shouldn't need
+to call it, directly.
 
 Your application should call this when it finds that it doesn't have a
 valid access token.  The **url** argument should be the url of your
