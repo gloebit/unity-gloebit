@@ -7,6 +7,10 @@ public class GloebitEntitlementsDemo : MonoBehaviour
 {
   Dictionary<string,object> products = null;
   bool refreshing_products = false;
+  bool fetching_user_details = false;
+
+  string user_id = null;
+  string user_name = null;
 
   // Test Consumer has a predefined list of products.
   string[] all_products = new string[7]{"hat", "shirt", "pants", "shoe",
@@ -24,34 +28,69 @@ public class GloebitEntitlementsDemo : MonoBehaviour
   }
 
 
+  void fetch_user_details ()
+  {
+    if (fetching_user_details)
+      return;
+    fetching_user_details = true;
+
+    print ("fetching user's id and name\n");
+    Gloebit.gloebit.GetUserDetails ((success, reason, uid, uname) => {
+        if (success)
+          {
+            user_id = uid;
+            user_name = uname;
+          }
+        else
+        {
+          print ("GetUserDetails failed -- " + reason);
+        }
+        fetching_user_details = false;
+      });
+
+
+  }
+
+
   void refresh_products ()
   {
-    if (! refreshing_products)
-      {
-        print ("refreshing user's product list\n");
+    if (refreshing_products)
+      return;
+    refreshing_products = true;
 
-        refreshing_products = true;
-        Gloebit.gloebit.GetProducts ((success, reason, new_products) => {
-            products = new_products;
-            if (! success)
-              {
-                print ("GetProducts failed -- " + reason);
-              }
-            refreshing_products = false;
-          });
-      }
+    print ("refreshing user's product list\n");
+    Gloebit.gloebit.GetProducts ((success, reason, new_products) => {
+        products = new_products;
+        if (! success)
+          {
+            print ("GetProducts failed -- " + reason);
+          }
+        refreshing_products = false;
+      });
   }
 
 
   void OnGUI()
   {
-    int y = 20;
+    int y = 80;
 
     if (products == null)
       {
         refresh_products ();
         return;
       }
+
+    if (user_id == null)
+      fetch_user_details ();
+
+    if (user_id != null)
+      GUI.Label (new Rect (20, 20, 500, vertical_size),
+                 "User Identifier: " + user_id);
+
+    if (user_name != null)
+      GUI.Label (new Rect (20, 42, 500, vertical_size),
+                 "User Name: " + user_name);
+
 
     // Loop through the predefined list of products and show
     // how many of each the current user has.

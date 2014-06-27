@@ -139,6 +139,38 @@ public class Gloebit : MonoBehaviour
 
 
 
+  private IEnumerator GetUserDetailsWorker
+  (Action<bool, string, string, string> cb) {
+    // Ask for details about the current user.
+    string ud_url = gloebit_base_url + "/user/";
+    Hashtable headers = new Hashtable ();
+    byte[] post_data = System.Text.Encoding.UTF8.GetBytes ("ignore");
+    headers.Add ("Authorization", "Bearer " + access_code);
+
+    WWW www = new WWW (ud_url, post_data, headers);
+    yield return www;
+
+    Dictionary<string,object> response =
+      (Dictionary<string,object>) Json.Deserialize (www.text);
+
+    bool success = (bool) response[ "success" ];
+    if (success) {
+      string user_id = (string) response[ "id" ];
+      string user_name = (string) response[ "full-name" ];
+      cb (success, (string) response[ "reason" ], user_id, user_name);
+    }
+    else {
+      cb (success, (string) response[ "reason" ], null, null);
+    }
+  }
+
+  public void GetUserDetails
+  (Action<bool, string, string, string> cb) {
+    StartCoroutine (GetUserDetailsWorker (cb));
+  }
+
+
+
   private IEnumerator GetProductsWorker
   (Action<bool, string, Dictionary<string, object>> cb) {
     // Get a list of all products and product counts for the
@@ -175,13 +207,13 @@ public class Gloebit : MonoBehaviour
 
   private IEnumerator ConsumeProductWorker
   (string product_name, int count, Action<bool, string, string, int> cb) {
-    string cp_url = gloebit_base_url + "/consume-user-product/" +
+    string cup_url = gloebit_base_url + "/consume-user-product/" +
       product_name + "/" + count.ToString ();
     Hashtable headers = new Hashtable ();
     byte[] post_data = System.Text.Encoding.UTF8.GetBytes ("ignore");
     headers.Add ("Authorization", "Bearer " + access_code);
 
-    WWW www = new WWW (cp_url, post_data, headers);
+    WWW www = new WWW (cup_url, post_data, headers);
     yield return www;
 
     Dictionary<string,object> response =
@@ -207,13 +239,13 @@ public class Gloebit : MonoBehaviour
 
   private IEnumerator GrantProductWorker
   (string product_name, int count, Action<bool, string, string, int> cb) {
-    string cp_url = gloebit_base_url + "/grant-user-product/" +
+    string gup_url = gloebit_base_url + "/grant-user-product/" +
       product_name + "/" + count.ToString ();
     Hashtable headers = new Hashtable ();
     byte[] post_data = System.Text.Encoding.UTF8.GetBytes ("ignore");
     headers.Add ("Authorization", "Bearer " + access_code);
 
-    WWW www = new WWW (cp_url, post_data, headers);
+    WWW www = new WWW (gup_url, post_data, headers);
     yield return www;
 
     Dictionary<string,object> response =
@@ -234,5 +266,9 @@ public class Gloebit : MonoBehaviour
   (string product_name, int count, Action<bool, string, string, int> cb) {
     StartCoroutine (GrantProductWorker (product_name, count, cb));
   }
+
+
+
+
 }
 
