@@ -49,6 +49,12 @@ replace it with your own code.
 GloebitUser API
 ===============
 
+These methods are available on static singleton object:
+
+```C#
+Gloebit.gloebit
+```
+
 ### getAccessCode
 
 ```C#
